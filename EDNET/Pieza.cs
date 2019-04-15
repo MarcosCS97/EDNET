@@ -60,6 +60,7 @@ namespace EDNET
                     {
                         cuadrados[i].Y += avance;
                     }
+                    posic.Y += avance;
                     break;
                 case Direccion.izq:
                 case Direccion.der:
@@ -67,6 +68,7 @@ namespace EDNET
                     {
                         cuadrados[i].X += (avance * (int)dir);
                     }
+                    posic.X += (avance * (int)dir);
                     break;
             }
         }
@@ -89,10 +91,7 @@ namespace EDNET
         /// para formar o rotat la pieza en la posición indicada
         /// </summary>
         /// <param name="pos">Valor que indica la posición de la pieza, por defecto es 1</param>
-        public virtual void rotaPieza()
-        {
-
-        }
+        public abstract void rotaPieza();
 
     }
 }

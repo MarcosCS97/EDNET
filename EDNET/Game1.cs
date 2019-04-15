@@ -19,7 +19,6 @@ namespace EDNET
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            piezaActual = new PiezaO(0, 0, graphics);
             Content.RootDirectory = "Content";
         }
 
@@ -35,7 +34,7 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaO(2, 10, graphics);
+            piezaActual = new PiezaI(2, 10, graphics);
 
         }
 
@@ -77,7 +76,9 @@ namespace EDNET
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.mueveRect();
+            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.rotaPieza();
+            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)) piezaActual.mueveRect(Direccion.izq);
+            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)) piezaActual.mueveRect(Direccion.der);
             if (keyboardState.IsKeyDown(Keys.Down)) piezaActual.mueveRect();
 
             // TODO: Add your update logic here
@@ -93,7 +94,7 @@ namespace EDNET
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
