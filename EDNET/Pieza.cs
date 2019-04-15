@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace EDNET
 {
+    public delegate int calcPos(int x);
     public enum Direccion
     {
         izq=-1,
@@ -17,15 +18,17 @@ namespace EDNET
 
     abstract class Pieza
     {
-        GraphicsDeviceManager graphics;
-        Vector2 posic;
-        int ancho;
-        int alto;
-        int separac;
-        int tamCuad;
-        int avance;
-        int rotac=1;
-        Rectangle[] cuadrados = new Rectangle[4];
+        public calcPos[] calcPos=new calcPos[4];
+        public GraphicsDeviceManager graphics;
+        public Vector2 posic;
+        public int ancho;
+        public int alto;
+        public int separac;
+        public int tamCuad;
+        public int avance;
+        public int rotac=1;
+        public Rectangle[] cuadrados = new Rectangle[4];
+        public Color color;
         
         public Pieza(int separac, int tamCuad, GraphicsDeviceManager graphics)
         {
@@ -33,8 +36,14 @@ namespace EDNET
             this.separac = separac;
             this.tamCuad = tamCuad;
             avance = tamCuad + separac;
-            posic.X = graphics.PreferredBackBufferWidth/2;
-            posic.Y = -separac*2;
+            posic.X = separac;
+            posic.Y = separac;
+
+            for(int i=0; i<calcPos.Length; i++)
+            {
+                int j = i;
+                calcPos[i] = new calcPos((x) => { return (int)(0.5 + j) * separac + j * tamCuad + x; });
+            }
             creaPieza();
         }
         
@@ -70,16 +79,20 @@ namespace EDNET
             for(int i=0; i<cuadrados.Length; i++)
             {
                 cuadrados[i] = new Rectangle(0, 0, tamCuad, tamCuad);
+                
             }
             rotaPieza();
         }
 
         /// <summary>
         /// Método que asigna cada cuadrado a su posición relativa necesaria
-        /// para formar la pieza en la posición indicada
+        /// para formar o rotat la pieza en la posición indicada
         /// </summary>
         /// <param name="pos">Valor que indica la posición de la pieza, por defecto es 1</param>
-        public abstract void rotaPieza(int pos = 1);
+        public virtual void rotaPieza()
+        {
+
+        }
 
     }
 }

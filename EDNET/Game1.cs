@@ -11,10 +11,15 @@ namespace EDNET
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D whiteRectangle;
+        Pieza piezaActual;
+        KeyboardState previousState;
+
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            piezaActual = new PiezaO(0, 0, graphics);
             Content.RootDirectory = "Content";
         }
 
@@ -29,6 +34,9 @@ namespace EDNET
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            previousState = Keyboard.GetState();
+            piezaActual = new PiezaO(2, 10, graphics);
+
         }
 
         /// <summary>
@@ -39,6 +47,8 @@ namespace EDNET
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            whiteRectangle = new Texture2D(GraphicsDevice, 1, 1);
+            whiteRectangle.SetData(new[] { Color.White });
 
             // TODO: use this.Content to load your game content here
         }
@@ -50,6 +60,9 @@ namespace EDNET
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            spriteBatch.Dispose();
+
+            whiteRectangle.Dispose();
         }
 
         /// <summary>
@@ -59,12 +72,19 @@ namespace EDNET
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.mueveRect();
+            if (keyboardState.IsKeyDown(Keys.Down)) piezaActual.mueveRect();
 
             // TODO: Add your update logic here
 
             base.Update(gameTime);
+            previousState = keyboardState;
+
         }
 
         /// <summary>
@@ -78,6 +98,14 @@ namespace EDNET
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+
+            spriteBatch.Begin();
+            foreach(Rectangle rect in piezaActual.cuadrados)
+            {
+
+                spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
+            }
+            spriteBatch.End();
         }
     }
 }
