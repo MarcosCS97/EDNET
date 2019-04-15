@@ -24,7 +24,7 @@ namespace EDNET
         int separac;
         int tamCuad;
         int avance;
-        int rotac;
+        int rotac=1;
         Rectangle[] cuadrados = new Rectangle[4];
         
         public Pieza(int separac, int tamCuad, GraphicsDeviceManager graphics)
@@ -32,11 +32,16 @@ namespace EDNET
             this.graphics = graphics;
             this.separac = separac;
             this.tamCuad = tamCuad;
+            avance = tamCuad + separac;
             posic.X = graphics.PreferredBackBufferWidth/2;
             posic.Y = -separac*2;
             creaPieza();
         }
-
+        
+        /// <summary>
+        /// Método que hace que la pieza se mueva hacia abajo o hacia los lados
+        /// </summary>
+        /// <param name="dir">Indica en qué dirección se moverá la pieza, por defecto hacia abajo</param>
         public virtual void mueveRect(Direccion dir = Direccion.abajo)
         {
             switch (dir)
@@ -57,6 +62,9 @@ namespace EDNET
             }
         }
 
+        /// <summary>
+        /// Método que crea los cuadrados que forman el tetrimino
+        /// </summary>
         public virtual void creaPieza()
         {
             for(int i=0; i<cuadrados.Length; i++)
@@ -66,6 +74,11 @@ namespace EDNET
             rotaPieza();
         }
 
+        /// <summary>
+        /// Método que asigna cada cuadrado a su posición relativa necesaria
+        /// para formar la pieza en la posición indicada
+        /// </summary>
+        /// <param name="pos">Valor que indica la posición de la pieza, por defecto es 1</param>
         public abstract void rotaPieza(int pos = 1);
 
     }
