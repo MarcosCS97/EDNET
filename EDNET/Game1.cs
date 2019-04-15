@@ -34,7 +34,7 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaJ(2, 10, graphics);
+            piezaActual = new PiezaZ(2, 10, graphics);
 
         }
 
