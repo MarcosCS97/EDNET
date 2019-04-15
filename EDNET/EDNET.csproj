@@ -45,6 +45,7 @@
     <Compile Include="Pieza.cs" />
     <Compile Include="PiezaI.cs" />
     <Compile Include="PiezaJ.cs" />
+    <Compile Include="PiezaL.cs" />
     <Compile Include="PiezaO.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
