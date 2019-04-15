@@ -39,14 +39,6 @@ namespace EDNET
                         cuadrados[cont].Location = new Point(calcPos[0]((int)posic.X), calcPos[i]((int)posic.Y));
                         cont++;
                     }
-                    //for (int i = 1; i >= 0; i--)
-                    //{
-                    //    for (int j = 0; j < 2; j++)
-                    //    {
-                    //        cuadrados[cont].Location = new Point(calcPos[i]((int)posic.X), calcPos[i+j]((int)posic.Y));
-                    //        cont++;
-                    //    }
-                    //}
                     break;
             }
             rotac++;
