@@ -20,7 +20,7 @@ namespace EDNET
     {
         public calcPos[] calcPos=new calcPos[4];
         public GraphicsDeviceManager graphics;
-        public Vector2 posic;
+        public Point posic;
         public int ancho;
         public int alto;
         public int separac;
@@ -30,14 +30,13 @@ namespace EDNET
         public Rectangle[] cuadrados = new Rectangle[4];
         public Color color;
         
-        public Pieza(int separac, int tamCuad, GraphicsDeviceManager graphics)
+        public Pieza(Point posic, int separac, int avance, GraphicsDeviceManager graphics)
         {
             this.graphics = graphics;
             this.separac = separac;
-            this.tamCuad = tamCuad;
-            avance = tamCuad + separac;
-            posic.X = separac;
-            posic.Y = separac;
+            this.avance = avance;
+            tamCuad = avance - separac;
+            this.posic = posic;
 
             for(int i=0; i<calcPos.Length; i++)
             {

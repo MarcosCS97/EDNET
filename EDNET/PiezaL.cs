@@ -9,7 +9,7 @@ namespace EDNET
 {
     class PiezaL : Pieza
     {
-        public PiezaL(int separac, int tamCuad, GraphicsDeviceManager graphics) : base(separac, tamCuad, graphics)
+        public PiezaL(Point posic, int separac, int tamCuad, GraphicsDeviceManager graphics) : base(posic, separac, tamCuad, graphics)
         {
             color = Color.Orange;
         }

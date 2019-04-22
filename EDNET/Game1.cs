@@ -14,11 +14,26 @@ namespace EDNET
         Texture2D whiteRectangle;
         Pieza piezaActual;
         KeyboardState previousState;
+        Color colFondo = Color.Black;
+        Color colBordes = Color.Blue;
+        public int avance = 20;
+        public int separac = 4;
+        Marco juego, prediccion, jugar, pausar, salir, puntuacion;
+
 
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            juego = new Marco(new Point(200, 20), avance * 15, avance * 40, 10, colBordes, colFondo);
+            jugar = new Marco(new Point(20, 20), 150, 40, 10, colBordes, colFondo);
+            pausar = new Marco(new Point(20, 90), 150, 40, 10, colBordes, colFondo);
+            salir = new Marco(new Point(20, 160), 150, 40, 10, colBordes, colFondo);
+            prediccion= new Marco(new Point(20, 400), 150, 150, 10, colBordes, colFondo);
+            puntuacion= new Marco(new Point(20, 730), 150, 90, 10, colBordes, colFondo);
+            graphics.PreferredBackBufferHeight = juego.marco.Height+20;
+            graphics.PreferredBackBufferWidth = juego.marco.Width+200;
+            graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
 
@@ -34,7 +49,7 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaT(2, 10, graphics);
+            piezaActual = new PiezaT(new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2)), separac, avance, graphics);
 
         }
 
@@ -94,19 +109,32 @@ namespace EDNET
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(colFondo);
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
 
             spriteBatch.Begin();
+            DrawMarco(juego);
+            DrawMarco(jugar);
+            DrawMarco(pausar);
+            DrawMarco(salir);
+            DrawMarco(prediccion);
+            DrawMarco(puntuacion);
             foreach(Rectangle rect in piezaActual.cuadrados)
             {
-
+                
                 spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
             }
             spriteBatch.End();
+        }
+
+        private void DrawMarco(Marco marco)
+        {
+            spriteBatch.Draw(whiteRectangle, marco.marco, marco.colBorde);
+            spriteBatch.Draw(whiteRectangle, marco.contenedor, marco.colFondo);
+
         }
     }
 }
