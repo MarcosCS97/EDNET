@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
+using System;
 
 namespace EDNET
 {
@@ -14,6 +15,7 @@ namespace EDNET
         SpriteBatch spriteBatch;
         Texture2D whiteRectangle;
         Pieza piezaActual;
+        Pieza piezaMuestra;
         KeyboardState previousState;
         Color colFondo = Color.Black;
         Color colBordes = Color.Blue;
@@ -21,6 +23,9 @@ namespace EDNET
         public int separac = 4;
         Marco juego, prediccion, jugar, pausar, salir, puntuacion;
         readonly Point posActual;
+        readonly Point posMuestra;
+        Random rnd=new Random();
+
 
 
 
@@ -38,6 +43,7 @@ namespace EDNET
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
             posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
+            posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
         }
 
         /// <summary>
@@ -52,8 +58,8 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaT(posActual, separac, avance, graphics);
-
+            piezaMuestra= randomPiece(posMuestra);
+            piezaActual =randomPiece(posActual);
         }
 
         /// <summary>
@@ -153,11 +159,13 @@ namespace EDNET
             DrawMarco(salir);
             DrawMarco(prediccion);
             DrawMarco(puntuacion);
-            foreach(Rectangle rect in piezaActual.cuadrados)
+            /*foreach(Rectangle rect in piezaActual.cuadrados)
             {
                 
                 spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
-            }
+            }*/
+            drawPiece(piezaActual,spriteBatch);
+            drawPiece(piezaMuestra,spriteBatch);
             spriteBatch.End();
         }
 
@@ -166,6 +174,40 @@ namespace EDNET
             spriteBatch.Draw(whiteRectangle, marco.marco, marco.colBorde);
             spriteBatch.Draw(whiteRectangle, marco.contenedor, marco.colFondo);
 
+        }
+
+        private void drawPiece(Pieza pieza, SpriteBatch sp){
+            foreach(Rectangle rect in pieza.cuadrados){
+                sp.Draw(whiteRectangle,rect, pieza.color);
+            }
+        }
+
+        private Pieza randomPiece(Point pos){
+            switch(rnd.Next(7)){
+                    case 0:
+                        return new PiezaI(pos,separac,avance,graphics);
+
+                    case 1:
+                        return new PiezaJ(pos,separac,avance,graphics);
+                        
+                    case 2:
+                        return new PiezaL(pos,separac,avance,graphics);
+                        
+                    case 3:
+                        return new PiezaO(pos,separac,avance,graphics);
+                        
+                    case 4:
+                        return new PiezaS(pos,separac,avance,graphics);
+                        
+                    case 5:
+                        return new PiezaT(pos,separac,avance,graphics);
+                        
+                    case 6:
+                        return new PiezaZ(pos,separac,avance,graphics);
+                        
+                    default:
+                        return null;
+            }
         }
     }
 }
