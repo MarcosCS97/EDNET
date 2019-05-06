@@ -140,6 +140,11 @@ namespace EDNET
                 if(!juego.contenedor.Contains(rect)){
                     return true;
                 }
+                foreach(Rectangle rectangle in posados){
+                    if(rect.Intersects(rectangle)){
+                        return true;
+                    }
+                }
             }
             return false;
         }
@@ -194,6 +199,7 @@ namespace EDNET
             }
             piezaActual=piezaMuestra;
             piezaActual.posic=posActual;
+            piezaActual.rotac=1;
             piezaActual.creaPieza();
             piezaMuestra=randomPiece(posMuestra);
         }

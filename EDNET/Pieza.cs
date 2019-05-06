@@ -22,8 +22,7 @@ namespace EDNET
         public calcPos[] calcPos=new calcPos[4];
         public GraphicsDeviceManager graphics;
         public Point posic;
-        public int ancho;
-        public int alto;
+
         public int separac;
         public int tamCuad;
         public int avance;
