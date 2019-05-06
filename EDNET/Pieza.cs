@@ -13,7 +13,8 @@ namespace EDNET
     {
         izq=-1,
         abajo=0,
-        der=1
+        der=1,
+        arriba=2
     };
 
     abstract class Pieza
@@ -54,6 +55,13 @@ namespace EDNET
         {
             switch (dir)
             {
+                case Direccion.arriba:
+                    for(int i=0; i<cuadrados.Length;i++)
+                    {
+                        cuadrados[i].Y -= avance;
+                    }
+                    posic.Y += avance;
+                    break;
                 case Direccion.abajo:
                     for(int i=0; i<cuadrados.Length;i++)
                     {

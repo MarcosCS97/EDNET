@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace EDNET
 {
@@ -19,6 +20,7 @@ namespace EDNET
         public int avance = 20;
         public int separac = 4;
         Marco juego, prediccion, jugar, pausar, salir, puntuacion;
+        readonly Point posActual;
 
 
 
@@ -35,6 +37,7 @@ namespace EDNET
             graphics.PreferredBackBufferWidth = juego.marco.Width+200;
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
+            posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
         }
 
         /// <summary>
@@ -49,7 +52,7 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaT(new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2)), separac, avance, graphics);
+            piezaActual = new PiezaT(posActual, separac, avance, graphics);
 
         }
 
@@ -92,10 +95,29 @@ namespace EDNET
                 Exit();
 
             if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.rotaPieza();
-            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)) piezaActual.mueveRect(Direccion.izq);
-            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)) piezaActual.mueveRect(Direccion.der);
-            if (keyboardState.IsKeyDown(Keys.Down)) piezaActual.mueveRect();
+            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)){
+                 piezaActual.mueveRect(Direccion.izq);
 
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.der);
+                }
+            }
+            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)){
+                 piezaActual.mueveRect(Direccion.der);
+
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.izq);
+                }
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Down)){
+
+                piezaActual.mueveRect();
+
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.arriba);
+                }
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -103,6 +125,15 @@ namespace EDNET
 
         }
 
+
+        private bool comprSal(){
+            foreach(Rectangle rect in piezaActual.cuadrados){
+                if(!juego.contenedor.Contains(rect)){
+                    return true;
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
