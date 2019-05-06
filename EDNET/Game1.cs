@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System;
+using System.Collections.Generic;
 
 namespace EDNET
 {
@@ -25,6 +26,7 @@ namespace EDNET
         readonly Point posActual;
         readonly Point posMuestra;
         Random rnd=new Random();
+        List<Rectangle> posados=new List<Rectangle>();
 
 
 
@@ -122,6 +124,7 @@ namespace EDNET
 
                 if(comprSal()){
                     piezaActual.mueveRect(Direccion.arriba);
+                    fijarPieza();
                 }
             }
             // TODO: Add your update logic here
@@ -166,6 +169,9 @@ namespace EDNET
             }*/
             drawPiece(piezaActual,spriteBatch);
             drawPiece(piezaMuestra,spriteBatch);
+            foreach(Rectangle rect in posados){
+                spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
+            }
             spriteBatch.End();
         }
 
@@ -180,6 +186,16 @@ namespace EDNET
             foreach(Rectangle rect in pieza.cuadrados){
                 sp.Draw(whiteRectangle,rect, pieza.color);
             }
+        }
+
+        private void fijarPieza(){
+            foreach(Rectangle rect in piezaActual.cuadrados){
+                posados.Add(rect);    
+            }
+            piezaActual=piezaMuestra;
+            piezaActual.posic=posActual;
+            piezaActual.creaPieza();
+            piezaMuestra=randomPiece(posMuestra);
         }
 
         private Pieza randomPiece(Point pos){
