@@ -102,7 +102,14 @@ namespace EDNET
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.rotaPieza();
+            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)){
+                piezaActual.rotaPieza();
+
+                if(comprSal()){
+                    piezaActual.restauraRotac();
+                }
+            }
+
             if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)){
                  piezaActual.mueveRect(Direccion.izq);
 

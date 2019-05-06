@@ -98,6 +98,7 @@ namespace EDNET
         /// </summary>
         /// <param name="pos">Valor que indica la posición de la pieza, por defecto es 1</param>
         public abstract void rotaPieza();
+        public abstract void restauraRotac();
 
     }
 }
