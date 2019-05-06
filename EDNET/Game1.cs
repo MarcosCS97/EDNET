@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
+using System;
+using System.Collections.Generic;
 
 namespace EDNET
 {
@@ -13,12 +16,18 @@ namespace EDNET
         SpriteBatch spriteBatch;
         Texture2D whiteRectangle;
         Pieza piezaActual;
+        Pieza piezaMuestra;
         KeyboardState previousState;
         Color colFondo = Color.Black;
         Color colBordes = Color.Blue;
         public int avance = 20;
         public int separac = 4;
         Marco juego, prediccion, jugar, pausar, salir, puntuacion;
+        readonly Point posActual;
+        readonly Point posMuestra;
+        Random rnd=new Random();
+        List<Rectangle> posados=new List<Rectangle>();
+
 
 
 
@@ -35,6 +44,8 @@ namespace EDNET
             graphics.PreferredBackBufferWidth = juego.marco.Width+200;
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
+            posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
+            posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
         }
 
         /// <summary>
@@ -49,8 +60,8 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
-            piezaActual = new PiezaT(new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2)), separac, avance, graphics);
-
+            piezaMuestra= randomPiece(posMuestra);
+            piezaActual =randomPiece(posActual);
         }
 
         /// <summary>
@@ -91,11 +102,38 @@ namespace EDNET
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)) piezaActual.rotaPieza();
-            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)) piezaActual.mueveRect(Direccion.izq);
-            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)) piezaActual.mueveRect(Direccion.der);
-            if (keyboardState.IsKeyDown(Keys.Down)) piezaActual.mueveRect();
+            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)){
+                piezaActual.rotaPieza();
 
+                if(comprSal()){
+                    piezaActual.restauraRotac();
+                }
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)){
+                 piezaActual.mueveRect(Direccion.izq);
+
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.der);
+                }
+            }
+            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)){
+                 piezaActual.mueveRect(Direccion.der);
+
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.izq);
+                }
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Down)){
+
+                piezaActual.mueveRect();
+
+                if(comprSal()){
+                    piezaActual.mueveRect(Direccion.arriba);
+                    fijarPieza();
+                }
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -103,6 +141,20 @@ namespace EDNET
 
         }
 
+
+        private bool comprSal(){
+            foreach(Rectangle rect in piezaActual.cuadrados){
+                if(!juego.contenedor.Contains(rect)){
+                    return true;
+                }
+                foreach(Rectangle rectangle in posados){
+                    if(rect.Intersects(rectangle)){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -122,10 +174,15 @@ namespace EDNET
             DrawMarco(salir);
             DrawMarco(prediccion);
             DrawMarco(puntuacion);
-            foreach(Rectangle rect in piezaActual.cuadrados)
+            /*foreach(Rectangle rect in piezaActual.cuadrados)
             {
                 
                 spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
+            }*/
+            drawPiece(piezaActual,spriteBatch);
+            drawPiece(piezaMuestra,spriteBatch);
+            foreach(Rectangle rect in posados){
+                spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
             }
             spriteBatch.End();
         }
@@ -135,6 +192,51 @@ namespace EDNET
             spriteBatch.Draw(whiteRectangle, marco.marco, marco.colBorde);
             spriteBatch.Draw(whiteRectangle, marco.contenedor, marco.colFondo);
 
+        }
+
+        private void drawPiece(Pieza pieza, SpriteBatch sp){
+            foreach(Rectangle rect in pieza.cuadrados){
+                sp.Draw(whiteRectangle,rect, pieza.color);
+            }
+        }
+
+        private void fijarPieza(){
+            foreach(Rectangle rect in piezaActual.cuadrados){
+                posados.Add(rect);    
+            }
+            piezaActual=piezaMuestra;
+            piezaActual.posic=posActual;
+            piezaActual.rotac=1;
+            piezaActual.creaPieza();
+            piezaMuestra=randomPiece(posMuestra);
+        }
+
+        private Pieza randomPiece(Point pos){
+            switch(rnd.Next(7)){
+                    case 0:
+                        return new PiezaI(pos,separac,avance,graphics);
+
+                    case 1:
+                        return new PiezaJ(pos,separac,avance,graphics);
+                        
+                    case 2:
+                        return new PiezaL(pos,separac,avance,graphics);
+                        
+                    case 3:
+                        return new PiezaO(pos,separac,avance,graphics);
+                        
+                    case 4:
+                        return new PiezaS(pos,separac,avance,graphics);
+                        
+                    case 5:
+                        return new PiezaT(pos,separac,avance,graphics);
+                        
+                    case 6:
+                        return new PiezaZ(pos,separac,avance,graphics);
+                        
+                    default:
+                        return null;
+            }
         }
     }
 }

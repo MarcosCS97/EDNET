@@ -24,8 +24,7 @@ namespace EDNET
                     cont++;
                 }
             }
-            ancho = 2 * (separac + tamCuad);
-            alto = 2 * (separac + tamCuad);
         }
+        public override void restauraRotac(){}
     }
 }

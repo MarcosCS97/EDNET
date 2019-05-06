@@ -13,7 +13,8 @@ namespace EDNET
     {
         izq=-1,
         abajo=0,
-        der=1
+        der=1,
+        arriba=2
     };
 
     abstract class Pieza
@@ -21,8 +22,7 @@ namespace EDNET
         public calcPos[] calcPos=new calcPos[4];
         public GraphicsDeviceManager graphics;
         public Point posic;
-        public int ancho;
-        public int alto;
+
         public int separac;
         public int tamCuad;
         public int avance;
@@ -54,6 +54,13 @@ namespace EDNET
         {
             switch (dir)
             {
+                case Direccion.arriba:
+                    for(int i=0; i<cuadrados.Length;i++)
+                    {
+                        cuadrados[i].Y -= avance;
+                    }
+                    posic.Y += avance;
+                    break;
                 case Direccion.abajo:
                     for(int i=0; i<cuadrados.Length;i++)
                     {
@@ -91,6 +98,7 @@ namespace EDNET
         /// </summary>
         /// <param name="pos">Valor que indica la posición de la pieza, por defecto es 1</param>
         public abstract void rotaPieza();
+        public abstract void restauraRotac();
 
     }
 }

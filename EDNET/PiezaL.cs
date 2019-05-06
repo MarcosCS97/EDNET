@@ -49,5 +49,13 @@ namespace EDNET
             rotac++;
             if (rotac > 4) rotac = 1;
         }
+        public override void restauraRotac()
+        {
+            for(int i=0;i<2;i++){
+                rotac--;
+                if(rotac<=0)rotac=4;
+            }
+            rotaPieza();
+        }
     }
 }
