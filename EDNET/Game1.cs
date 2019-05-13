@@ -12,6 +12,7 @@ namespace EDNET
     /// </summary>
     public class Game1 : Game
     {
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D whiteRectangle;
@@ -27,6 +28,8 @@ namespace EDNET
         readonly Point posMuestra;
         Random rnd=new Random();
         List<Rectangle> posados=new List<Rectangle>();
+        readonly int colAncho=15;
+        readonly int colAlto=40;
 
 
 
@@ -34,7 +37,7 @@ namespace EDNET
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            juego = new Marco(new Point(200, 20), avance * 15, avance * 40, 10, colBordes, colFondo);
+            juego = new Marco(new Point(200, 20), avance * colAncho, avance * colAlto, 10, colBordes, colFondo);
             jugar = new Marco(new Point(20, 20), 150, 40, 10, colBordes, colFondo);
             pausar = new Marco(new Point(20, 90), 150, 40, 10, colBordes, colFondo);
             salir = new Marco(new Point(20, 160), 150, 40, 10, colBordes, colFondo);
@@ -46,6 +49,7 @@ namespace EDNET
             Content.RootDirectory = "Content";
             posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
             posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
+            
         }
 
         /// <summary>
@@ -174,16 +178,12 @@ namespace EDNET
             DrawMarco(salir);
             DrawMarco(prediccion);
             DrawMarco(puntuacion);
-            /*foreach(Rectangle rect in piezaActual.cuadrados)
-            {
-                
-                spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
-            }*/
             drawPiece(piezaActual,spriteBatch);
             drawPiece(piezaMuestra,spriteBatch);
             foreach(Rectangle rect in posados){
                 spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
             }
+            spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,juego.contenedor.Y+(avance*2),juego.contenedor.Width,2),colBordes);
             spriteBatch.End();
         }
 
@@ -202,8 +202,9 @@ namespace EDNET
 
         private void fijarPieza(){
             foreach(Rectangle rect in piezaActual.cuadrados){
-                posados.Add(rect);    
+                posados.Add(rect);
             }
+            filasLlenas();
             piezaActual=piezaMuestra;
             piezaActual.posic=posActual;
             piezaActual.rotac=1;
@@ -211,32 +212,48 @@ namespace EDNET
             piezaMuestra=randomPiece(posMuestra);
         }
 
-        private Pieza randomPiece(Point pos){
-            switch(rnd.Next(7)){
-                    case 0:
-                        return new PiezaI(pos,separac,avance,graphics);
+        private void filasLlenas(){
+            List<int> alturas=new List<int>();
+            List<Rectangle> listaElim;
+            int cont;
 
-                    case 1:
-                        return new PiezaJ(pos,separac,avance,graphics);
-                        
-                    case 2:
-                        return new PiezaL(pos,separac,avance,graphics);
-                        
-                    case 3:
-                        return new PiezaO(pos,separac,avance,graphics);
-                        
-                    case 4:
-                        return new PiezaS(pos,separac,avance,graphics);
-                        
-                    case 5:
-                        return new PiezaT(pos,separac,avance,graphics);
-                        
-                    case 6:
-                        return new PiezaZ(pos,separac,avance,graphics);
-                        
-                    default:
-                        return null;
+            foreach(Rectangle rect in posados){
+                if(!alturas.Contains(rect.Y)) alturas.Add(rect.Y);
             }
+            for(int i=alturas.Count-1; i>=0; i--){
+                cont=0;
+                foreach(Rectangle rect in posados){
+                    if(rect.Y==alturas[i]) cont++;
+                }
+                if(cont>=colAncho){
+                    listaElim=new List<Rectangle>();
+                    for(int j=0; j<posados.Count; j++){
+                        if(posados[j].Y==alturas[i]){
+                            listaElim.Add(posados[j]);
+                        }
+                        if(posados[j].Y<alturas[i]) {
+                            Rectangle placeholder=posados[j];
+                            placeholder.Y +=avance;
+                            posados[j]=placeholder;
+                        }
+                    }
+                    foreach(Rectangle rect in listaElim){
+                        posados.Remove(rect);
+                    }
+                    
+                }
+            }
+        }
+
+        private Pieza randomPiece(Point pos){
+            Pieza[] piezas= new Pieza[7]{new PiezaI(pos,separac,avance,graphics),
+                                            new PiezaJ(pos,separac,avance,graphics),
+                                            new PiezaL(pos,separac,avance,graphics),
+                                            new PiezaO(pos,separac,avance,graphics),
+                                            new PiezaS(pos,separac,avance,graphics),
+                                            new PiezaT(pos,separac,avance,graphics),
+                                            new PiezaZ(pos,separac,avance,graphics)};
+           return piezas[rnd.Next(7)];
         }
     }
 }
