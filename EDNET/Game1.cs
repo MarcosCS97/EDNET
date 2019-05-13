@@ -12,6 +12,7 @@ namespace EDNET
     /// </summary>
     public class Game1 : Game
     {
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D whiteRectangle;
@@ -46,6 +47,7 @@ namespace EDNET
             Content.RootDirectory = "Content";
             posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
             posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
+            
         }
 
         /// <summary>
@@ -212,31 +214,14 @@ namespace EDNET
         }
 
         private Pieza randomPiece(Point pos){
-            switch(rnd.Next(7)){
-                    case 0:
-                        return new PiezaI(pos,separac,avance,graphics);
-
-                    case 1:
-                        return new PiezaJ(pos,separac,avance,graphics);
-                        
-                    case 2:
-                        return new PiezaL(pos,separac,avance,graphics);
-                        
-                    case 3:
-                        return new PiezaO(pos,separac,avance,graphics);
-                        
-                    case 4:
-                        return new PiezaS(pos,separac,avance,graphics);
-                        
-                    case 5:
-                        return new PiezaT(pos,separac,avance,graphics);
-                        
-                    case 6:
-                        return new PiezaZ(pos,separac,avance,graphics);
-                        
-                    default:
-                        return null;
-            }
+            Pieza[] piezas= new Pieza[7]{new PiezaI(pos,separac,avance,graphics),
+                                            new PiezaJ(pos,separac,avance,graphics),
+                                            new PiezaL(pos,separac,avance,graphics),
+                                            new PiezaO(pos,separac,avance,graphics),
+                                            new PiezaS(pos,separac,avance,graphics),
+                                            new PiezaT(pos,separac,avance,graphics),
+                                            new PiezaZ(pos,separac,avance,graphics)};
+           return piezas[rnd.Next(7)];
         }
     }
 }
