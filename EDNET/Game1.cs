@@ -28,6 +28,8 @@ namespace EDNET
         readonly Point posMuestra;
         Random rnd=new Random();
         List<Rectangle> posados=new List<Rectangle>();
+        readonly int colAncho=15;
+        readonly int colAlto=40;
 
 
 
@@ -35,7 +37,7 @@ namespace EDNET
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            juego = new Marco(new Point(200, 20), avance * 15, avance * 40, 10, colBordes, colFondo);
+            juego = new Marco(new Point(200, 20), avance * colAncho, avance * colAlto, 10, colBordes, colFondo);
             jugar = new Marco(new Point(20, 20), 150, 40, 10, colBordes, colFondo);
             pausar = new Marco(new Point(20, 90), 150, 40, 10, colBordes, colFondo);
             salir = new Marco(new Point(20, 160), 150, 40, 10, colBordes, colFondo);
@@ -204,13 +206,47 @@ namespace EDNET
 
         private void fijarPieza(){
             foreach(Rectangle rect in piezaActual.cuadrados){
-                posados.Add(rect);    
+                posados.Add(rect);
             }
+            filasLlenas();
             piezaActual=piezaMuestra;
             piezaActual.posic=posActual;
             piezaActual.rotac=1;
             piezaActual.creaPieza();
             piezaMuestra=randomPiece(posMuestra);
+        }
+
+        private void filasLlenas(){
+            List<int> alturas=new List<int>();
+            List<Rectangle> listaElim;
+            int cont;
+
+            foreach(Rectangle rect in posados){
+                if(!alturas.Contains(rect.Y)) alturas.Add(rect.Y);
+            }
+            for(int i=alturas.Count-1; i>=0; i--){
+                cont=0;
+                foreach(Rectangle rect in posados){
+                    if(rect.Y==alturas[i]) cont++;
+                }
+                if(cont>=colAncho){
+                    listaElim=new List<Rectangle>();
+                    for(int j=0; j<posados.Count; j++){
+                        if(posados[j].Y==alturas[i]){
+                            listaElim.Add(posados[j]);
+                        }
+                        if(posados[j].Y<alturas[i]) {
+                            Rectangle placeholder=posados[j];
+                            placeholder.Y +=avance;
+                            posados[j]=placeholder;
+                        }
+                    }
+                    foreach(Rectangle rect in listaElim){
+                        posados.Remove(rect);
+                    }
+                    
+                }
+            }
         }
 
         private Pieza randomPiece(Point pos){
