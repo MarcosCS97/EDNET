@@ -178,16 +178,12 @@ namespace EDNET
             DrawMarco(salir);
             DrawMarco(prediccion);
             DrawMarco(puntuacion);
-            /*foreach(Rectangle rect in piezaActual.cuadrados)
-            {
-                
-                spriteBatch.Draw(whiteRectangle, rect, piezaActual.color);
-            }*/
             drawPiece(piezaActual,spriteBatch);
             drawPiece(piezaMuestra,spriteBatch);
             foreach(Rectangle rect in posados){
                 spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
             }
+            spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,juego.contenedor.Y+(avance*2),juego.contenedor.Width,2),colBordes);
             spriteBatch.End();
         }
 
