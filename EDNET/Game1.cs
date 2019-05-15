@@ -117,6 +117,8 @@ namespace EDNET
                 //Boton Jugar
                 if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
                     nuevoJuego();
+                    posados=new List<Rectangle>();
+
                     noJuego=false;
                     isRunning=true;
                 }
@@ -253,8 +255,6 @@ namespace EDNET
                 if(rect.Y<altMax){
                     isRunning=false;
                     noJuego=true;
-                }else{
-                    Debug.WriteLine("Fin del juego");
                 }
             }
             muestraToActual();
