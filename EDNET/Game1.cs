@@ -32,6 +32,8 @@ namespace EDNET
         readonly int colAncho=15;
         readonly int colAlto=30;
         readonly int altMax;
+        float delay=500;
+        float remainingDelay;
 
 
 
@@ -53,6 +55,7 @@ namespace EDNET
             posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
             altMax=juego.contenedor.Y+(avance*2)-(separac/2);
             IsMouseVisible=true;
+            remainingDelay=delay;
         }
 
         /// <summary>
@@ -107,6 +110,13 @@ namespace EDNET
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
+            float timer = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            remainingDelay -= timer;
+
+            if(remainingDelay<=0){
+                remainingDelay=delay;
+                descender();
+            }
 
             if(mouseState.LeftButton == ButtonState.Pressed && previousMouse.LeftButton == ButtonState.Released){
                 int mouseX=mouseState.X;
@@ -153,18 +163,22 @@ namespace EDNET
 
             if (keyboardState.IsKeyDown(Keys.Down)){
 
-                piezaActual.mueveRect();
-
-                if(comprSal()){
-                    piezaActual.mueveRect(Direccion.arriba);
-                    fijarPieza();
-                }
+                descender();
             }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
             previousState = keyboardState;
             previousMouse = mouseState;
+        }
+
+        private void descender(){
+            piezaActual.mueveRect();
+
+            if(comprSal()){
+                piezaActual.mueveRect(Direccion.arriba);
+                fijarPieza();
+            }
         }
 
 
