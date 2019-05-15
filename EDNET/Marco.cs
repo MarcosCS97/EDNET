@@ -11,9 +11,6 @@ namespace EDNET
     class Marco
     {
 
-        public int ancho;
-        public int alto;
-        public int borde;
         public Color colBorde;
         public Color colFondo;
         public Rectangle marco;
