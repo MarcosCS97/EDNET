@@ -19,6 +19,7 @@ namespace EDNET
         Pieza piezaActual;
         Pieza piezaMuestra;
         KeyboardState previousState;
+        MouseState previousMouse;
         Color colFondo = Color.Black;
         Color colBordes = Color.Blue;
         public int avance = 20;
@@ -29,7 +30,8 @@ namespace EDNET
         Random rnd=new Random();
         List<Rectangle> posados=new List<Rectangle>();
         readonly int colAncho=15;
-        readonly int colAlto=40;
+        readonly int colAlto=30;
+        readonly int altMax;
 
 
 
@@ -41,15 +43,16 @@ namespace EDNET
             jugar = new Marco(new Point(20, 20), 150, 40, 10, colBordes, colFondo);
             pausar = new Marco(new Point(20, 90), 150, 40, 10, colBordes, colFondo);
             salir = new Marco(new Point(20, 160), 150, 40, 10, colBordes, colFondo);
-            prediccion= new Marco(new Point(20, 400), 150, 150, 10, colBordes, colFondo);
-            puntuacion= new Marco(new Point(20, 730), 150, 90, 10, colBordes, colFondo);
-            graphics.PreferredBackBufferHeight = juego.marco.Height+20;
-            graphics.PreferredBackBufferWidth = juego.marco.Width+200;
+            prediccion= new Marco(new Point(20, 290), 150, 150, 10, colBordes, colFondo);
+            puntuacion= new Marco(new Point(20, 530), 150, 90, 10, colBordes, colFondo);
+            graphics.PreferredBackBufferHeight = juego.marco.Bottom+10;
+            graphics.PreferredBackBufferWidth = juego.marco.Right+10;
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
             posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
             posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
-            
+            altMax=juego.contenedor.Y+(avance*2)-(separac/2);
+            IsMouseVisible=true;
         }
 
         /// <summary>
@@ -64,6 +67,7 @@ namespace EDNET
 
             base.Initialize();
             previousState = Keyboard.GetState();
+            previousMouse = Mouse.GetState();
             piezaMuestra= randomPiece(posMuestra);
             piezaActual =randomPiece(posActual);
         }
@@ -102,6 +106,24 @@ namespace EDNET
         protected override void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+
+            if(mouseState.LeftButton == ButtonState.Pressed && previousMouse.LeftButton == ButtonState.Released){
+                int mouseX=mouseState.X;
+                int mouseY=mouseState.Y;
+                //Boton Jugar
+                if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
+                    Debug.WriteLine("jugar");
+                }
+                //Boton Pausar
+                if(mouseX>pausar.marco.Left && mouseX<pausar.marco.Right && mouseY>pausar.marco.Top && mouseY<pausar.marco.Bottom){
+                    Debug.WriteLine("pausar");
+                }
+                //Boton Salir
+                if(mouseX>salir.marco.Left && mouseX<salir.marco.Right && mouseY>salir.marco.Top && mouseY<salir.marco.Bottom){
+                    Debug.WriteLine("salir");
+                }
+            }
 
             if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
@@ -142,7 +164,7 @@ namespace EDNET
 
             base.Update(gameTime);
             previousState = keyboardState;
-
+            previousMouse = mouseState;
         }
 
 
@@ -183,7 +205,7 @@ namespace EDNET
             foreach(Rectangle rect in posados){
                 spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
             }
-            spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,juego.contenedor.Y+(avance*2),juego.contenedor.Width,2),colBordes);
+            spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,altMax,juego.contenedor.Width,2),colBordes);
             spriteBatch.End();
         }
 
@@ -205,11 +227,17 @@ namespace EDNET
                 posados.Add(rect);
             }
             filasLlenas();
+            foreach(Rectangle rect in posados){
+                if(rect.Y<altMax){
+                    Exit();
+                }
+            }
             piezaActual=piezaMuestra;
             piezaActual.posic=posActual;
             piezaActual.rotac=1;
             piezaActual.creaPieza();
             piezaMuestra=randomPiece(posMuestra);
+            
         }
 
         private void filasLlenas(){
