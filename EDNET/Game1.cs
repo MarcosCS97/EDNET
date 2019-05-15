@@ -34,7 +34,7 @@ namespace EDNET
         readonly int altMax;
         float delay=500;
         float remainingDelay;
-
+        bool isRunning=false;
 
 
 
@@ -110,66 +110,70 @@ namespace EDNET
         {
             KeyboardState keyboardState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
-            float timer = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            remainingDelay -= timer;
-
-            if(remainingDelay<=0){
-                remainingDelay=delay;
-                descender();
-            }
-
+           
             if(mouseState.LeftButton == ButtonState.Pressed && previousMouse.LeftButton == ButtonState.Released){
                 int mouseX=mouseState.X;
                 int mouseY=mouseState.Y;
                 //Boton Jugar
                 if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
-                    Debug.WriteLine("jugar");
+
                 }
                 //Boton Pausar
                 if(mouseX>pausar.marco.Left && mouseX<pausar.marco.Right && mouseY>pausar.marco.Top && mouseY<pausar.marco.Bottom){
-                    Debug.WriteLine("pausar");
+                    isRunning = !isRunning;
                 }
                 //Boton Salir
                 if(mouseX>salir.marco.Left && mouseX<salir.marco.Right && mouseY>salir.marco.Top && mouseY<salir.marco.Bottom){
-                    Debug.WriteLine("salir");
+                    Exit();
                 }
             }
 
-            if (keyboardState.IsKeyDown(Keys.Escape))
-                Exit();
+            if(isRunning){
 
-            if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)){
-                piezaActual.rotaPieza();
-
-                if(comprSal()){
-                    piezaActual.restauraRotac();
+                float timer = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                remainingDelay -= timer;
+            
+                if(remainingDelay<=0){
+                    remainingDelay=delay;
+                    descender();
                 }
-            }
 
-            if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)){
-                 piezaActual.mueveRect(Direccion.izq);
 
-                if(comprSal()){
-                    piezaActual.mueveRect(Direccion.der);
+                if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)){
+                    piezaActual.rotaPieza();
+
+                    if(comprSal()){
+                        piezaActual.restauraRotac();
+                    }
                 }
-            }
-            if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)){
-                 piezaActual.mueveRect(Direccion.der);
 
-                if(comprSal()){
-                    piezaActual.mueveRect(Direccion.izq);
+                if (keyboardState.IsKeyDown(Keys.Left)&& !previousState.IsKeyDown(Keys.Left)){
+                     piezaActual.mueveRect(Direccion.izq);
+
+                    if(comprSal()){
+                        piezaActual.mueveRect(Direccion.der);
+                    }
                 }
-            }
+                if (keyboardState.IsKeyDown(Keys.Right)&& !previousState.IsKeyDown(Keys.Right)){
+                     piezaActual.mueveRect(Direccion.der);
 
-            if (keyboardState.IsKeyDown(Keys.Down)){
+                    if(comprSal()){
+                        piezaActual.mueveRect(Direccion.izq);
+                    }
+                }
 
-                descender();
+                if (keyboardState.IsKeyDown(Keys.Down)){
+
+                    descender();
+                }
+
+                previousState = keyboardState;
             }
+            
             // TODO: Add your update logic here
 
-            base.Update(gameTime);
-            previousState = keyboardState;
             previousMouse = mouseState;
+            base.Update(gameTime);
         }
 
         private void descender(){
