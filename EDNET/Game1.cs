@@ -245,20 +245,19 @@ namespace EDNET
                 sp.Draw(whiteRectangle,rect, pieza.color);
             }
         }
-
         private void fijarPieza(){
             foreach(Rectangle rect in piezaActual.cuadrados){
                 posados.Add(rect);
             }
+            muestraToActual();
             filasLlenas();
             foreach(Rectangle rect in posados){
                 if(rect.Y<altMax){
                     isRunning=false;
                     noJuego=true;
                 }
+                
             }
-            muestraToActual();
-            
         }
 
         private void muestraToActual(){
@@ -282,7 +281,8 @@ namespace EDNET
             foreach(Rectangle rect in posados){
                 if(!alturas.Contains(rect.Y)) alturas.Add(rect.Y);
             }
-            for(int i=alturas.Count-1; i>=0; i--){
+            alturas.Sort();
+            for(int i=0; i<alturas.Count; i++){
                 cont=0;
                 foreach(Rectangle rect in posados){
                     if(rect.Y==alturas[i]) cont++;
