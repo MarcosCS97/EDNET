@@ -34,7 +34,8 @@ namespace EDNET
         readonly int altMax;
         float delay=500;
         float remainingDelay;
-        bool isRunning=false;
+        bool isRunning=true;
+        bool noJuego = true;
 
 
 
@@ -71,8 +72,7 @@ namespace EDNET
             base.Initialize();
             previousState = Keyboard.GetState();
             previousMouse = Mouse.GetState();
-            piezaMuestra= randomPiece(posMuestra);
-            piezaActual =randomPiece(posActual);
+            
         }
 
         /// <summary>
@@ -116,10 +116,12 @@ namespace EDNET
                 int mouseY=mouseState.Y;
                 //Boton Jugar
                 if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
-
+                    nuevoJuego();
+                    noJuego=false;
+                    isRunning=true;
                 }
                 //Boton Pausar
-                if(mouseX>pausar.marco.Left && mouseX<pausar.marco.Right && mouseY>pausar.marco.Top && mouseY<pausar.marco.Bottom){
+                if(mouseX>pausar.marco.Left && mouseX<pausar.marco.Right && mouseY>pausar.marco.Top && mouseY<pausar.marco.Bottom && !noJuego){
                     isRunning = !isRunning;
                 }
                 //Boton Salir
@@ -128,7 +130,7 @@ namespace EDNET
                 }
             }
 
-            if(isRunning){
+            if(isRunning && !noJuego){
 
                 float timer = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 remainingDelay -= timer;
@@ -218,10 +220,12 @@ namespace EDNET
             DrawMarco(salir);
             DrawMarco(prediccion);
             DrawMarco(puntuacion);
-            drawPiece(piezaActual,spriteBatch);
-            drawPiece(piezaMuestra,spriteBatch);
-            foreach(Rectangle rect in posados){
-                spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
+            if(!noJuego){
+                drawPiece(piezaActual,spriteBatch);
+                drawPiece(piezaMuestra,spriteBatch);
+                foreach(Rectangle rect in posados){
+                    spriteBatch.Draw(whiteRectangle,rect, Color.Gray);
+                }
             }
             spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,altMax,juego.contenedor.Width,2),colBordes);
             spriteBatch.End();
@@ -247,15 +251,27 @@ namespace EDNET
             filasLlenas();
             foreach(Rectangle rect in posados){
                 if(rect.Y<altMax){
-                    Exit();
+                    isRunning=false;
+                    noJuego=true;
+                }else{
+                    Debug.WriteLine("Fin del juego");
                 }
             }
+            muestraToActual();
+            
+        }
+
+        private void muestraToActual(){
             piezaActual=piezaMuestra;
             piezaActual.posic=posActual;
             piezaActual.rotac=1;
             piezaActual.creaPieza();
             piezaMuestra=randomPiece(posMuestra);
-            
+        }
+
+        private void nuevoJuego(){
+            piezaMuestra=randomPiece(posMuestra);
+            muestraToActual();
         }
 
         private void filasLlenas(){
