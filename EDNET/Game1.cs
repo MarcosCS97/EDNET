@@ -29,10 +29,14 @@ namespace EDNET
         readonly Point posMuestra;
         Random rnd=new Random();
         List<Rectangle> posados=new List<Rectangle>();
-        readonly int colAncho=15;
+        readonly int colAncho=16;
         readonly int colAlto=30;
         readonly int altMax;
-        float delay=500;
+        readonly int delayMax = 500;
+        readonly int delayMin = 150;
+        readonly int delayGap = 70;
+        float delay = 500;
+        int aumDif = 0;
         float remainingDelay;
         bool isRunning=true;
         bool noJuego = true;
@@ -52,7 +56,7 @@ namespace EDNET
             graphics.PreferredBackBufferWidth = juego.marco.Right+10;
             graphics.ApplyChanges();
             Content.RootDirectory = "Content";
-            posActual=new Point(juego.contenedor.Location.X+(separac/2),juego.contenedor.Location.Y+(separac/2));
+            posActual=new Point(juego.contenedor.Location.X+(avance*((colAncho/2)-1))+(separac/2),juego.contenedor.Location.Y+(separac/2));
             posMuestra=new Point(prediccion.contenedor.Center.X-(avance*2),prediccion.contenedor.Center.Y-avance);
             altMax=juego.contenedor.Y+(avance*2)-(separac/2);
             IsMouseVisible=true;
@@ -118,7 +122,7 @@ namespace EDNET
                 if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
                     nuevoJuego();
                     posados=new List<Rectangle>();
-
+                    delay = delayMax;
                     noJuego=false;
                     isRunning=true;
                 }
@@ -132,7 +136,26 @@ namespace EDNET
                 }
             }
 
-            if(isRunning && !noJuego){
+            if (keyboardState.IsKeyDown(Keys.P) && !previousState.IsKeyDown(Keys.P) && !noJuego)
+            {
+                isRunning = !isRunning;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.S) && !previousState.IsKeyDown(Keys.S))
+            {
+                Exit();
+            }
+
+            if (keyboardState.IsKeyDown(Keys.N) && !previousState.IsKeyDown(Keys.N))
+            {
+                nuevoJuego();
+                posados = new List<Rectangle>();
+                delay = delayMax;
+                noJuego = false;
+                isRunning = true;
+            }
+
+            if (isRunning && !noJuego){
 
                 float timer = (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 remainingDelay -= timer;
@@ -142,6 +165,7 @@ namespace EDNET
                     descender();
                 }
 
+                
 
                 if (keyboardState.IsKeyDown(Keys.Space)&& !previousState.IsKeyDown(Keys.Space)){
                     piezaActual.rotaPieza();
@@ -171,11 +195,11 @@ namespace EDNET
                     descender();
                 }
 
-                previousState = keyboardState;
             }
             
             // TODO: Add your update logic here
 
+            previousState = keyboardState;
             previousMouse = mouseState;
             base.Update(gameTime);
         }
@@ -186,6 +210,7 @@ namespace EDNET
             if(comprSal()){
                 piezaActual.mueveRect(Direccion.arriba);
                 fijarPieza();
+                
             }
         }
 
@@ -302,7 +327,12 @@ namespace EDNET
                     foreach(Rectangle rect in listaElim){
                         posados.Remove(rect);
                     }
-                    
+                    if (aumDif >= 4)
+                    {
+                        aumDif = 0;
+                        delay = delay <= delayMin ? delayMin : delay - delayGap;
+                    }
+                    aumDif++;
                 }
             }
         }
