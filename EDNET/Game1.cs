@@ -41,6 +41,7 @@ namespace EDNET
         float remainingDelay;
         bool isRunning=true;
         bool noJuego = true;
+        bool inicio = true;
         int lineas = 0;
 
 
@@ -256,6 +257,10 @@ namespace EDNET
             spriteBatch.DrawString(font, "SALIR", new Vector2(salir.contenedor.Center.X-(font.MeasureString("SALIR").X/2), salir.contenedor.Center.Y-(font.MeasureString("SALIR").Y/2)), Color.White);
             spriteBatch.DrawString(smallFont, "Filas eliminadas:", new Vector2(puntuacion.contenedor.X+5, puntuacion.contenedor.Y+5), Color.White);
             spriteBatch.DrawString(font, ""+lineas, new Vector2(puntuacion.contenedor.Center.X-(font.MeasureString(""+lineas).X/2), puntuacion.contenedor.Center.Y), Color.White);
+            if (!inicio && noJuego)
+            {
+                spriteBatch.DrawString(font, "GAME\nOVER", new Vector2(juego.contenedor.Center.X - (font.MeasureString("GAME\nOVER").X / 2), juego.contenedor.Center.Y - (font.MeasureString("GAME\nOVER").Y / 2)), Color.White);
+            }
             spriteBatch.End();
         }
 
@@ -279,7 +284,6 @@ namespace EDNET
             filasLlenas();
             foreach(Rectangle rect in posados){
                 if(rect.Y<altMax){
-                    isRunning=false;
                     noJuego=true;
                 }
                 
@@ -301,6 +305,7 @@ namespace EDNET
             posados = new List<Rectangle>();
             delay = delayMax;
             noJuego = false;
+            inicio = false;
             isRunning = true;
         }
 
