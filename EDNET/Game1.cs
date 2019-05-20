@@ -14,6 +14,7 @@ namespace EDNET
     {
 
         GraphicsDeviceManager graphics;
+        SpriteFont font,smallFont;
         SpriteBatch spriteBatch;
         Texture2D whiteRectangle;
         Pieza piezaActual;
@@ -40,6 +41,7 @@ namespace EDNET
         float remainingDelay;
         bool isRunning=true;
         bool noJuego = true;
+        int lineas = 0;
 
 
 
@@ -87,6 +89,8 @@ namespace EDNET
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            font = Content.Load<SpriteFont>("text");
+            smallFont = Content.Load<SpriteFont>("smallText");
             whiteRectangle = new Texture2D(GraphicsDevice, 1, 1);
             whiteRectangle.SetData(new[] { Color.White });
 
@@ -121,10 +125,6 @@ namespace EDNET
                 //Boton Jugar
                 if(mouseX>jugar.marco.Left && mouseX<jugar.marco.Right && mouseY>jugar.marco.Top && mouseY<jugar.marco.Bottom){
                     nuevoJuego();
-                    posados=new List<Rectangle>();
-                    delay = delayMax;
-                    noJuego=false;
-                    isRunning=true;
                 }
                 //Boton Pausar
                 if(mouseX>pausar.marco.Left && mouseX<pausar.marco.Right && mouseY>pausar.marco.Top && mouseY<pausar.marco.Bottom && !noJuego){
@@ -146,13 +146,9 @@ namespace EDNET
                 Exit();
             }
 
-            if (keyboardState.IsKeyDown(Keys.N) && !previousState.IsKeyDown(Keys.N))
+            if (keyboardState.IsKeyDown(Keys.J) && !previousState.IsKeyDown(Keys.J))
             {
                 nuevoJuego();
-                posados = new List<Rectangle>();
-                delay = delayMax;
-                noJuego = false;
-                isRunning = true;
             }
 
             if (isRunning && !noJuego){
@@ -255,6 +251,11 @@ namespace EDNET
                 }
             }
             spriteBatch.Draw(whiteRectangle,new Rectangle(juego.contenedor.X,altMax,juego.contenedor.Width,2),colBordes);
+            spriteBatch.DrawString(font, "JUGAR", new Vector2(jugar.contenedor.Center.X-(font.MeasureString("JUGAR").X/2), jugar.contenedor.Center.Y-(font.MeasureString("JUGAR").Y/2)), Color.White);
+            spriteBatch.DrawString(font, isRunning?"PAUSA":"CONTINUA", new Vector2(pausar.contenedor.Center.X-(font.MeasureString(isRunning ? "PAUSA" : "CONTINUA").X/2), pausar.contenedor.Center.Y-(font.MeasureString(isRunning ? "PAUSA" : "CONTINUA").Y/2)), Color.White);
+            spriteBatch.DrawString(font, "SALIR", new Vector2(salir.contenedor.Center.X-(font.MeasureString("SALIR").X/2), salir.contenedor.Center.Y-(font.MeasureString("SALIR").Y/2)), Color.White);
+            spriteBatch.DrawString(smallFont, "Filas eliminadas:", new Vector2(puntuacion.contenedor.X+5, puntuacion.contenedor.Y+5), Color.White);
+            spriteBatch.DrawString(font, ""+lineas, new Vector2(puntuacion.contenedor.Center.X-(font.MeasureString(""+lineas).X/2), puntuacion.contenedor.Center.Y), Color.White);
             spriteBatch.End();
         }
 
@@ -296,6 +297,11 @@ namespace EDNET
         private void nuevoJuego(){
             piezaMuestra=randomPiece(posMuestra);
             muestraToActual();
+            lineas = 0;
+            posados = new List<Rectangle>();
+            delay = delayMax;
+            noJuego = false;
+            isRunning = true;
         }
 
         private void filasLlenas(){
@@ -333,6 +339,7 @@ namespace EDNET
                         delay = delay <= delayMin ? delayMin : delay - delayGap;
                     }
                     aumDif++;
+                    lineas++;
                 }
             }
         }
